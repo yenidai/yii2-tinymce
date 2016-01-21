@@ -77,6 +77,12 @@ class TinyMCE extends InputWidget
 		'print preview media',
 	];
 	/**
+	 *
+	 * @var array enabled lanugages on TinyMCE interface (require .js files in ./langs/ folder
+	 * english language is supported by default
+	 */
+	public $supportedLanguages = [];
+	/**
 	 * @var array to remove the default toolbar
 	 */
 	public $removeToolbar = [];
@@ -113,13 +119,20 @@ class TinyMCE extends InputWidget
 		if (isset($this->name) || isset($this->model) || isset($this->attribute)) {
 			parent::init();
 		}
+		$TinyMCElanguage=[];
+		if(isset($this->supportedLanguages) && $this->supportedLanguages !== [] ) {
+			$prefferedLang = \Yii::$app->request->getPreferredLanguage();
+			if(in_array($prefferedLang, $this->supportedLanguages, TRUE)){
+				$TinyMCElanguage = ['language' => 'pl'];
+			}
+		}
 		$this->config = ArrayHelper::merge([
 			'style_formats_merge' => true,
 			'theme' => $this->theme,
 			'plugins' => $this->plugins,
 			'templates' => $this->templates,
 			'height' => $this->height,
-		], $this->config);
+		], $TinyMCElanguage, $this->config);
 		
 		$this->config['fontsize_formats'] = "6pt 7pt 8pt 9pt 10pt 11pt 12pt 13pt 14pt 15pt 16pt 18pt 20pt 24pt 28pt 36pt 40pt 48pt";
 		if (!isset($this->options['rows']))
